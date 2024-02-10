@@ -35,7 +35,7 @@ function Item(props) {
 
 
         <Paper className="CarouselItem">
-            <img src={props.item.imageUrl} alt={props.item.name} className="CarouselImage" />
+            <img src={props.item.imageUrl} alt={props.item.name} height="250px" className="CarouselImage" />
             <div className="CarouselContent">
                 <h2>{props.item.name}</h2>
                 <p>{props.item.description}</p>

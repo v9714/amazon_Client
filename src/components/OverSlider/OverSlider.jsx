@@ -1,7 +1,6 @@
 import React from 'react'
 import './c.css'
 import { Link } from 'react-router-dom'
-
 export default function OverSlider() {
     return (
         < div className='overimg'>

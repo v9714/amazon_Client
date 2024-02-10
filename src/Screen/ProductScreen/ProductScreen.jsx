@@ -1,37 +1,76 @@
-import React from 'react'
-import { Link, useParams } from 'react-router-dom'
-import apiHelper from '../../Commn/ApiHelper'
+import React, { useContext } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react';
 import { useState } from 'react';
 import './ProductScreen.css'
 import Zoom from 'react-img-zoom'
+import jwtDecode from 'jwt-decode';
+import { CookieContext } from '../../Context/Cookies';
+import apiHelper from '../../Commn/ApiHelper';
+
 
 export default function ProductScreen() {
 
   let { id } = useParams();
+  const userData = useContext(CookieContext);
+  const nagiget = useNavigate()
+
+  // let user = jwtDecode(userData?.cookiess?.user || null)
+  // console.log(user)
+
+  let user
   const [Product, setProduct] = useState({})
-  const [quantity, setQuantity] = useState({ productQuantity: 1 });
+
+  const [quantity, setQuantity] = useState({
+    product_id: id,
+    userId: null,
+    productQuantity: 1,
+
+  });
 
   console.log(quantity)
   const getProductById = async () => {
-
     try {
       const result = await apiHelper.getProductById(id)
       setProduct(result.data.productById)
     } catch (error) {
       console.log(error)
+
     }
   }
 
+  const addToCart = async () => {
+    try {
+      if (!userData.cookiess.user) {
+        nagiget("/login");
+        return;
+      }
+      user = jwtDecode(userData?.cookiess?.user)
+      const result = await apiHelper.addCart({ ...quantity, userId: user._id });
+      console.log(result)
+      if (result && result.status === 200) {
+        nagiget("/cart");
+      }
+    } catch (error) {
+      console.log(error);
+      if (error && error.response && error.response.data && error.response.data.message) {
+        nagiget("/cart");
+      }
+    }
+
+  };
+
+
   useEffect(() => {
     getProductById()
+
+
     // eslint-disable-next-line
   }, [])
 
 
   return (
     <div className="card-wrapper productScreen">
-
       <div className="card">
         {/* card left */}
         <div className="product-imgs">
@@ -201,7 +240,7 @@ export default function ProductScreen() {
               (<button type="button" className="btn" disabled >
                 Add to Cart <i className="fas fa-shopping-cart" />
               </button>) :
-              (<button type="button" className="btn">
+              (<button type="button" className="btn" onClick={addToCart}>
                 Add to Cart <i className="fas fa-shopping-cart" />
               </button>)
             }

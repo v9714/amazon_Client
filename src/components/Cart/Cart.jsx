@@ -4,7 +4,7 @@ import "./Cart.css";
 import { Link } from "react-router-dom";
 import { CookieContext } from "../../Context/Cookies";
 import jwtDecode from "jwt-decode";
-import apiHelper from "../Commn/ApiHelper";
+import apiHelper from "../../Commn/ApiHelper";
 import toast, { Toaster } from "react-hot-toast";
 
 export default function Cart({ product, isLiked = false, updateIsLiked }) {
@@ -19,7 +19,7 @@ export default function Cart({ product, isLiked = false, updateIsLiked }) {
       if (!userdata || !id) return window.location.href = "/";
       const result = await apiHelper.productLike({ userid: userdata, productId: id });
       if (result && result.status === 200) {
-        console.log(result);
+        // console.log(result);
         updateIsLiked(product._id, true);
       }
 

@@ -1,31 +1,40 @@
 import React, { useContext } from "react";
-import Cart from "../Cart/Cart";
-import ImageSlider from "../Slider/Slider";
-import OverSlider from "../OverSlider/OverSlider";
+import Cart from "../components/Cart/Cart";
+import ImageSlider from "../components/Slider/Slider";
 import apiHelper from "../Commn/ApiHelper";
 import { useEffect } from "react";
 import { useState } from "react";
-import Loder from "../Commn/Loder";
-import MessageBox from "../Commn/MessageBox";
-import { CookieContext } from "../../Context/Cookies";
+import Loder from "../components/Loder/Loder";
+import MessageBox from "../components/MessageBox";
+import { CookieContext } from "../Context/Cookies";
+import jwtDecode from "jwt-decode";
 
 export default function Home() {
   const [product, setProduct] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
+
   const coo = useContext(CookieContext);
+  const userdata = coo.cookiess.user;
+  let uid;
+  if (coo.cookiess.user) {
+    uid = jwtDecode(coo.cookiess.user)
+  }
+
+  console.log(uid?._id)
+
 
   const getProduct = async () => {
     try {
       setIsLoading(true);
-      const userdata = coo.cookiess.user;
       let promises = [apiHelper.getProduct()];
       if (userdata) {
-        promises.push(apiHelper.getproductLike());
+        promises.push(apiHelper.getproductLike(uid?._id));
       }
       const [productResult, likeResult] = await Promise.all(promises);
       if (productResult.status === 200) {
+        console.log(likeResult)
         let productData = productResult.data.Product;
         if (likeResult && likeResult.status === 200) {
           const likeData = likeResult.data.Product;
@@ -57,7 +66,7 @@ export default function Home() {
 
   const updateIsLiked = (productId) => {
     setProduct((prevProducts) => {
-      return prevProducts.map((p) => (p._id === productId ? { ...p, isLiked :true} : p));
+      return prevProducts.map((p) => (p._id === productId ? { ...p, isLiked: true } : p));
     });
   };
 
@@ -66,6 +75,7 @@ export default function Home() {
 
   useEffect(() => {
     getProduct();
+    // eslint-disable-next-line 
   }, []);
 
   return (
@@ -74,37 +84,21 @@ export default function Home() {
       <Loder isLoding={isLoading} />
       <MessageBox error={error} seterror={setError} />
 
-      {/* <div className="over-slider" style={{ marginBottom: "calc(32vw + 10px)" }}> */}
-      <div className="over-slider" >
-        <ImageSlider />
-        <div className="Over_slider_carts">
-          {/* <OverSlider /> */}
+      <>
+        <div >
+          <ImageSlider />
         </div>
-      </div>
-      <div className="cart">
-        <>
-          <div className="container-fluid">
-            <div className="row d-flex align-items-start">
-              {/* {
-                product.map((x) => (
-                  <Cart key={x._id} product={x} isLiked={x.isLiked}  setProduct={setProduct} />
-               
-                ))
-              } */}
-
-
-              
-                {
-                  product.map((x) => (
-                    <Cart key={x._id} product={x} isLiked={x.isLiked} updateIsLiked={updateIsLiked} />
-                  ))
-                }
-
-
-            </div>
+        <div className="container-fluid pt-4">
+          <h2 className="pro_title ps-5" >New Products</h2>
+          <div className="row d-flex align-items-start">
+            {
+              product.map((x) => (
+                <Cart key={x._id} product={x} isLiked={x.isLiked} updateIsLiked={updateIsLiked} />
+              ))
+            }
           </div>
-        </>
-      </div>
+        </div>
+      </>
     </div>
   );
 }

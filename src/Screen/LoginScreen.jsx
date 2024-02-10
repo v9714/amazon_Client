@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import apiHelper from "../Commn/ApiHelper";
 import toast, { Toaster } from "react-hot-toast";
+import apiHelper from "../Commn/ApiHelper";
 
 export default function LoginScreen() {
   const navigate = useNavigate();
@@ -18,12 +18,13 @@ export default function LoginScreen() {
   const Loginhandler = async (ev) => {
     ev.preventDefault();
     try {
-      await apiHelper.loginUser(userInfo);
+    const result =   await apiHelper.loginUser(userInfo);
+      console.log(result.data.token)
+      
       navigate("/");
     } catch (error) {
       console.error(error);
       if (error && error.response && error.response.data && error.response.data.message) {
-        console.log(error.response.data.message, "dfdfdfdf")
         toast.error(error.response.data.message)
       }
 

@@ -12,10 +12,6 @@
   position: relative;
 }
 
-main {
-  background-color: #ececec;
-}
-
 /* Footer */
 .footer-title {
   display: flex;
@@ -87,6 +83,7 @@ main {
     display: none !important;
   }
 }
+
 @media (max-width: 950px) {
   .c-boxx {
     display: none !important;
@@ -94,6 +91,7 @@ main {
 }
 
 @media (max-width: 680px) {
+
   .oc-2,
   .oc-2,
   .c-boxx,
@@ -101,4 +99,19 @@ main {
   .over-slider {
     display: none !important;
   }
+}
+
+.pay {
+  cursor: pointer;
+}
+
+.css-1ps6pg7-MuiPaper-root {
+  height: 255px !important;
+}
+.pro_title{
+  /* background-color: #37475a9e; */
+    border-radius: 9px;
+    padding: 5px 0px;
+    font-size: 1.8rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.116);
 }
